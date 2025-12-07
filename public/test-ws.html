@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>WebSocket Test</title>
+<style>
+body { font-family: monospace; padding: 20px; background: #f5f5f5; }
+button { padding: 10px 20px; font-size: 16px; cursor: pointer; }
+#log { border: 1px solid #ccc; padding: 10px; margin-top: 20px; height: 400px; overflow-y: auto; white-space: pre-wrap; background: white; }
+.success { color: green; }
+.error { color: red; }
+.info { color: blue; }
+</style>
+</head>
+<body>
+<h1>🧪 Gemini WebSocket Connection Test</h1>
+<button onclick="testConnection();">▶ Test WebSocket Connection</button>
+<button onclick="document.getElementById('log').innerHTML = '';">Clear Logs</button>
+<div id="log"><i>Logs will appear here...</i></div>
+
+<script>
+function log(msg, type = 'info') {
+  const logEl = document.getElementById('log');
+  const className = type;
+  logEl.innerHTML += `<span class="${className}">${msg}</span>\n`;
+  console.log(msg);
+  logEl.scrollTop = logEl.scrollHeight;
+}
+
+function testConnection() {
+  log('━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━');
+  log('Starting WebSocket connection test...', 'info');
+  log(`Target: ws://localhost:8080/ws/voice`, 'info');
+  log('');
+  
+  const ws = new WebSocket('ws://localhost:8080/ws/voice');
+  
+  ws.onopen = () => {
+    log('✅ WebSocket Connected!', 'success');
+    log('');
+    log('Sending setup message with company data...', 'info');
+    
+    const setupMsg = {
+      setup: { 
+        prompt: 'Company Name: TechFix\nWe repair laptops and phones.\nOpening Hours: 9 AM - 6 PM.'
+      }
+    };
+    
+    log(`Payload: ${JSON.stringify(setupMsg)}`, 'info');
+    ws.send(JSON.stringify(setupMsg));
+    log('Setup message sent!', 'success');
+  };
+  
+  ws.onmessage = (event) => {
+    log('');
+    log(`📨 Message received (${event.data.length} bytes):`, 'success');
+    try {
+      const msg = JSON.parse(event.data);
+      if (msg.setupComplete) {
+        log('  ✅ Setup Complete!', 'success');
+      } else if (msg.serverContent) {
+        log('  ServerContent received', 'info');
+        if (msg.serverContent.modelTurn) {
+          log('  - Model turn received', 'info');
+        }
+      } else {
+        log(`  ${JSON.stringify(msg).substring(0, 150)}...`, 'info');
+      }
+    } catch(e) {
+      log(`  ${event.data.substring(0, 150)}...`, 'info');
+    }
+  };
+  
+  ws.onclose = (event) => {
+    log('');
+    log(`❌ WebSocket Closed (Code: ${event.code})`, 'error');
+  };
+  
+  ws.onerror = (event) => {
+    log(`❌ Error: ${event.message || 'Unknown error'}`, 'error');
+  };
+  
+  // Auto-close after 15 seconds
+  setTimeout(() => {
+    if (ws.readyState === WebSocket.OPEN) {
+      log('Auto-closing connection after 15 seconds...', 'info');
+      ws.close();
+    }
+  }, 15000);
+}
+</script>
+</body>
+</html>
