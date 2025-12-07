@@ -1,264 +1,289 @@
 import React, { useState, useRef, useEffect } from 'react';
-import { Mic, Phone, PhoneOff, Settings, MessageSquare, Globe, Smartphone, Activity, Cpu, AlertTriangle, BookOpen, TrendingDown, Zap, CheckCircle2, MousePointerClick, ArrowDown, Power, Loader2 } from 'lucide-react';
+import { Mic, Phone, PhoneOff, Settings, MessageSquare, Globe, Smartphone, Activity, Cpu, AlertTriangle, BookOpen, TrendingDown, Zap, CheckCircle2, MousePointerClick, ArrowDown, Loader2 } from 'lucide-react';
 
-// --- STYLES & ANIMATIONS ---
-const styles = {
-  container: {
-    fontFamily: '"Inter", "Segoe UI", sans-serif',
-    background: 'linear-gradient(135deg, #0f172a 0%, #1e293b 100%)',
-    minHeight: '100vh',
-    color: '#f8fafc',
-    display: 'flex',
-    flexDirection: 'column',
-    alignItems: 'center',
-    padding: '20px',
-  },
-  heroSection: {
-    textAlign: 'center',
-    marginBottom: '20px', 
-    maxWidth: '900px',
-    width: '100%',
-    display: 'flex',
-    flexDirection: 'column',
-    alignItems: 'center',
-  },
-  heroTitle: {
-    fontSize: '32px', 
-    fontWeight: '800',
-    margin: '10px 0 20px 0',
-    background: 'linear-gradient(to right, #60a5fa, #a855f7)',
-    WebkitBackgroundClip: 'text',
-    WebkitTextFillColor: 'transparent',
-    letterSpacing: '-1px',
-  },
-  featureList: {
-    display: 'grid',
-    gridTemplateColumns: '1fr 1fr', 
-    gap: '12px 24px', 
-    background: 'rgba(30, 41, 59, 0.3)',
-    padding: '20px', 
-    borderRadius: '16px',
-    border: '1px solid rgba(148, 163, 184, 0.1)',
-    marginBottom: '20px',
-    width: '100%',
-    maxWidth: '850px', 
-  },
-  featureItem: {
-    display: 'flex',
-    alignItems: 'center',
-    gap: '10px',
-    fontSize: '14px',
-    color: '#e2e8f0',
-    textAlign: 'left',
-  },
-  highlight: {
-    color: '#60a5fa',
-    fontWeight: '600',
-  },
-  valueGrid: {
-    display: 'grid',
-    gridTemplateColumns: 'repeat(3, 1fr)',
-    gap: '15px',
-    marginTop: '40px', 
-    marginBottom: '20px',
-    width: '100%',
-    maxWidth: '900px',
-  },
-  valueCard: {
-    background: 'rgba(30, 41, 59, 0.4)',
-    border: '1px solid rgba(148, 163, 184, 0.1)',
-    borderRadius: '16px',
-    padding: '20px', 
-    display: 'flex',
-    flexDirection: 'column',
-    alignItems: 'center',
-    textAlign: 'center',
-    gap: '8px',
-  },
-  demoPrompt: {
-    display: 'flex',
-    alignItems: 'center',
-    gap: '8px',
-    background: 'rgba(34, 197, 94, 0.15)',
-    border: '1px solid #22c55e',
-    color: '#4ade80',
-    padding: '8px 16px',
-    borderRadius: '30px',
-    fontSize: '14px',
-    fontWeight: '600',
-    marginBottom: '20px',
-    animation: 'bounce 2s infinite',
-    cursor: 'pointer',
-    boxShadow: '0 0 15px rgba(34, 197, 94, 0.3)',
-  },
-  disclaimer: {
-    background: 'rgba(234, 179, 8, 0.1)',
-    border: '1px solid rgba(234, 179, 8, 0.2)',
-    color: '#fef08a',
-    padding: '10px 20px',
-    borderRadius: '12px',
-    fontSize: '12px',
-    marginBottom: '20px',
-    display: 'flex',
-    alignItems: 'flex-start',
-    gap: '12px',
-    lineHeight: '1.5',
-    maxWidth: '800px',
-    width: '100%',
-    scrollMarginTop: '20px', // Adds a bit of breathing room when scrolling
-  },
-  mainGrid: {
-    display: 'grid',
-    gridTemplateColumns: '1fr 1fr',
-    gap: '40px',
-    maxWidth: '1000px',
-    width: '100%',
-    marginBottom: '10px',
-  },
-  card: {
-    background: 'rgba(30, 41, 59, 0.7)',
-    backdropFilter: 'blur(10px)',
-    border: '1px solid rgba(148, 163, 184, 0.1)',
-    borderRadius: '24px',
-    padding: '25px',
-    boxShadow: '0 20px 25px -5px rgba(0, 0, 0, 0.2)',
-    display: 'flex',
-    flexDirection: 'column',
-  },
-  inputArea: {
-    background: '#0f172a',
-    border: '1px solid #334155',
-    color: '#94a3b8',
-    borderRadius: '12px',
-    padding: '15px',
-    width: '100%',
-    height: '180px',
-    fontFamily: 'monospace',
-    resize: 'none',
-    marginBottom: '20px',
-    fontSize: '13px',
-    outline: 'none',
-    transition: 'border 0.3s',
-    lineHeight: '1.4',
-  },
-  trainBtn: {
-    background: 'linear-gradient(90deg, #3b82f6 0%, #2563eb 100%)',
-    color: 'white',
-    border: 'none',
-    padding: '12px',
-    borderRadius: '12px',
-    fontWeight: '600',
-    cursor: 'pointer',
-    display: 'flex',
-    alignItems: 'center',
-    justifyContent: 'center',
-    gap: '8px',
-    transition: 'transform 0.1s',
-  },
-  phoneScreen: {
-    background: '#000',
-    borderRadius: '35px',
-    border: '4px solid #334155',
-    height: '600px',
-    position: 'relative',
-    overflow: 'hidden',
-    display: 'flex',
-    flexDirection: 'column',
-  },
-  phoneHeader: {
-    padding: '20px',
-    textAlign: 'center',
-    background: 'linear-gradient(180deg, rgba(0,0,0,0.8) 0%, transparent 100%)',
-    zIndex: 2,
-  },
-  waveformBox: {
-    flex: 1,
-    display: 'flex',
-    alignItems: 'center',
-    justifyContent: 'center',
-    position: 'relative',
-  },
-  orb: {
-    width: '120px',
-    height: '120px',
-    borderRadius: '50%',
-    background: 'radial-gradient(circle, rgba(59,130,246,0.8) 0%, rgba(59,130,246,0) 70%)',
-    boxShadow: '0 0 40px rgba(59,130,246,0.4)',
-    transition: 'all 0.3s ease',
-  },
-  chatOverlay: {
-    position: 'absolute',
-    bottom: '100px',
-    left: '0',
-    right: '0',
-    padding: '20px',
-    maxHeight: '220px',
-    overflowY: 'auto',
-    display: 'flex',
-    flexDirection: 'column',
-    gap: '10px',
-    maskImage: 'linear-gradient(to top, black 80%, transparent 100%)',
-  },
-  chatBubble: {
-    padding: '10px 14px',
-    borderRadius: '16px',
-    fontSize: '13px',
-    maxWidth: '85%',
-    animation: 'slideUp 0.3s ease-out',
-  },
-  controls: {
-    height: '90px',
-    background: 'rgba(20, 20, 20, 0.9)',
-    backdropFilter: 'blur(5px)',
-    display: 'flex',
-    justifyContent: 'space-around',
-    alignItems: 'center',
-    padding: '0 30px',
-  },
-  controlBtn: {
-    width: '50px',
-    height: '50px',
-    borderRadius: '50%',
-    border: 'none',
-    display: 'flex',
-    alignItems: 'center',
-    justifyContent: 'center',
-    cursor: 'pointer',
-    color: 'white',
-    transition: 'transform 0.2s',
-  },
-  callBtnPulse: {
-    animation: 'ring 1.5s infinite',
-  },
-  visionSection: {
-    maxWidth: '900px',
-    width: '100%',
-    marginTop: '20px',
-    textAlign: 'center',
-    paddingTop: '20px',
-    borderTop: '1px solid rgba(148, 163, 184, 0.1)',
-  },
-  visionGrid: {
-    display: 'flex',
-    justifyContent: 'center',
-    gap: '30px',
-    marginTop: '20px',
-    flexWrap: 'wrap',
-  },
-  visionItem: {
-    background: 'rgba(30, 41, 59, 0.4)',
-    padding: '12px 20px',
-    borderRadius: '12px',
-    border: '1px solid rgba(148, 163, 184, 0.1)',
-    display: 'flex',
-    alignItems: 'center',
-    gap: '10px',
-    color: '#94a3b8',
-    fontSize: '13px',
-  },
+// --- RESPONSIVE HOOK ---
+const useWindowWidth = () => {
+  const [width, setWidth] = useState(window.innerWidth);
+  useEffect(() => {
+    const handleResize = () => setWidth(window.innerWidth);
+    window.addEventListener('resize', handleResize);
+    return () => window.removeEventListener('resize', handleResize);
+  }, []);
+  return width;
 };
 
 const App = () => {
+  const width = useWindowWidth();
+  const isMobile = width < 768; // Breakpoint for mobile
+
+  // --- STYLES & ANIMATIONS ---
+  const styles = {
+    container: {
+      fontFamily: '"Inter", "Segoe UI", sans-serif',
+      background: 'linear-gradient(135deg, #0f172a 0%, #1e293b 100%)',
+      minHeight: '100vh',
+      color: '#f8fafc',
+      display: 'flex',
+      flexDirection: 'column',
+      alignItems: 'center',
+      padding: isMobile ? '15px' : '20px',
+      overflowX: 'hidden', // Prevent horizontal scroll
+    },
+    heroSection: {
+      textAlign: 'center',
+      marginBottom: '20px', 
+      maxWidth: '900px',
+      width: '100%',
+      display: 'flex',
+      flexDirection: 'column',
+      alignItems: 'center',
+    },
+    heroTitle: {
+      fontSize: isMobile ? '26px' : '32px', 
+      fontWeight: '800',
+      margin: '10px 0 20px 0',
+      background: 'linear-gradient(to right, #60a5fa, #a855f7)',
+      WebkitBackgroundClip: 'text',
+      WebkitTextFillColor: 'transparent',
+      letterSpacing: '-1px',
+      lineHeight: '1.2',
+    },
+    featureList: {
+      display: 'grid',
+      // Responsive Grid: 1 column on mobile, 2 on desktop
+      gridTemplateColumns: isMobile ? '1fr' : '1fr 1fr', 
+      gap: '12px 24px', 
+      background: 'rgba(30, 41, 59, 0.3)',
+      padding: '20px', 
+      borderRadius: '16px',
+      border: '1px solid rgba(148, 163, 184, 0.1)',
+      marginBottom: '20px',
+      width: '100%',
+      maxWidth: '850px', 
+    },
+    featureItem: {
+      display: 'flex',
+      alignItems: 'center',
+      gap: '10px',
+      fontSize: '14px',
+      color: '#e2e8f0',
+      textAlign: 'left',
+    },
+    highlight: {
+      color: '#60a5fa',
+      fontWeight: '600',
+    },
+    demoPrompt: {
+      display: 'flex',
+      alignItems: 'center',
+      gap: '8px',
+      background: 'rgba(34, 197, 94, 0.15)',
+      border: '1px solid #22c55e',
+      color: '#4ade80',
+      padding: '8px 16px',
+      borderRadius: '30px',
+      fontSize: '14px',
+      fontWeight: '600',
+      marginBottom: '20px',
+      animation: 'bounce 2s infinite',
+      cursor: 'pointer',
+      boxShadow: '0 0 15px rgba(34, 197, 94, 0.3)',
+    },
+    disclaimer: {
+      background: 'rgba(234, 179, 8, 0.1)',
+      border: '1px solid rgba(234, 179, 8, 0.2)',
+      color: '#fef08a',
+      padding: '10px 20px',
+      borderRadius: '12px',
+      fontSize: '12px',
+      marginBottom: '20px',
+      display: 'flex',
+      alignItems: 'flex-start',
+      gap: '12px',
+      lineHeight: '1.5',
+      maxWidth: '800px',
+      width: '100%',
+      scrollMarginTop: '20px',
+    },
+    mainGrid: {
+      display: 'grid',
+      // Responsive Grid: Stack vertically on mobile
+      gridTemplateColumns: isMobile ? '1fr' : '1fr 1fr',
+      gap: '40px',
+      maxWidth: '1000px',
+      width: '100%',
+      marginBottom: '10px',
+    },
+    card: {
+      background: 'rgba(30, 41, 59, 0.7)',
+      backdropFilter: 'blur(10px)',
+      border: '1px solid rgba(148, 163, 184, 0.1)',
+      borderRadius: '24px',
+      padding: '25px',
+      boxShadow: '0 20px 25px -5px rgba(0, 0, 0, 0.2)',
+      display: 'flex',
+      flexDirection: 'column',
+      // On mobile, let the card take full width but order it second
+      order: isMobile ? 2 : 1, 
+    },
+    inputArea: {
+      background: '#0f172a',
+      border: '1px solid #334155',
+      color: '#94a3b8',
+      borderRadius: '12px',
+      padding: '15px',
+      width: '100%',
+      height: '180px',
+      fontFamily: 'monospace',
+      resize: 'none',
+      marginBottom: '20px',
+      fontSize: '13px',
+      outline: 'none',
+      transition: 'border 0.3s',
+      lineHeight: '1.4',
+    },
+    trainBtn: {
+      background: 'linear-gradient(90deg, #3b82f6 0%, #2563eb 100%)',
+      color: 'white',
+      border: 'none',
+      padding: '12px',
+      borderRadius: '12px',
+      fontWeight: '600',
+      cursor: 'pointer',
+      display: 'flex',
+      alignItems: 'center',
+      justifyContent: 'center',
+      gap: '8px',
+      transition: 'transform 0.1s',
+    },
+    phoneScreen: {
+      background: '#000',
+      borderRadius: '35px',
+      border: '4px solid #334155',
+      height: isMobile ? '500px' : '600px', // Shorter on mobile
+      position: 'relative',
+      overflow: 'hidden',
+      display: 'flex',
+      flexDirection: 'column',
+      // On mobile, show phone first
+      order: isMobile ? 1 : 2,
+    },
+    phoneHeader: {
+      padding: '20px',
+      textAlign: 'center',
+      background: 'linear-gradient(180deg, rgba(0,0,0,0.8) 0%, transparent 100%)',
+      zIndex: 2,
+    },
+    waveformBox: {
+      flex: 1,
+      display: 'flex',
+      alignItems: 'center',
+      justifyContent: 'center',
+      position: 'relative',
+    },
+    orb: {
+      width: '120px',
+      height: '120px',
+      borderRadius: '50%',
+      background: 'radial-gradient(circle, rgba(59,130,246,0.8) 0%, rgba(59,130,246,0) 70%)',
+      boxShadow: '0 0 40px rgba(59,130,246,0.4)',
+      transition: 'all 0.3s ease',
+    },
+    chatOverlay: {
+      position: 'absolute',
+      bottom: '100px',
+      left: '0',
+      right: '0',
+      padding: '20px',
+      maxHeight: '220px',
+      overflowY: 'auto',
+      display: 'flex',
+      flexDirection: 'column',
+      gap: '10px',
+      maskImage: 'linear-gradient(to top, black 80%, transparent 100%)',
+    },
+    chatBubble: {
+      padding: '10px 14px',
+      borderRadius: '16px',
+      fontSize: '13px',
+      maxWidth: '85%',
+      animation: 'slideUp 0.3s ease-out',
+    },
+    controls: {
+      height: '90px',
+      background: 'rgba(20, 20, 20, 0.9)',
+      backdropFilter: 'blur(5px)',
+      display: 'flex',
+      justifyContent: 'space-around',
+      alignItems: 'center',
+      padding: '0 30px',
+    },
+    controlBtn: {
+      width: '50px',
+      height: '50px',
+      borderRadius: '50%',
+      border: 'none',
+      display: 'flex',
+      alignItems: 'center',
+      justifyContent: 'center',
+      cursor: 'pointer',
+      color: 'white',
+      transition: 'transform 0.2s',
+    },
+    callBtnPulse: {
+      animation: 'ring 1.5s infinite',
+    },
+    valueGrid: {
+      display: 'grid',
+      // Responsive Grid: 1 column on mobile, 3 on desktop
+      gridTemplateColumns: isMobile ? '1fr' : 'repeat(3, 1fr)',
+      gap: '15px',
+      marginTop: '40px', 
+      marginBottom: '20px',
+      width: '100%',
+      maxWidth: '900px',
+    },
+    valueCard: {
+      background: 'rgba(30, 41, 59, 0.4)',
+      border: '1px solid rgba(148, 163, 184, 0.1)',
+      borderRadius: '16px',
+      padding: '20px', 
+      display: 'flex',
+      flexDirection: 'column',
+      alignItems: 'center',
+      textAlign: 'center',
+      gap: '8px',
+    },
+    visionSection: {
+      maxWidth: '900px',
+      width: '100%',
+      marginTop: '20px',
+      textAlign: 'center',
+      paddingTop: '20px',
+      borderTop: '1px solid rgba(148, 163, 184, 0.1)',
+    },
+    visionGrid: {
+      display: 'flex',
+      justifyContent: 'center',
+      gap: isMobile ? '15px' : '30px',
+      marginTop: '20px',
+      flexWrap: 'wrap',
+    },
+    visionItem: {
+      background: 'rgba(30, 41, 59, 0.4)',
+      padding: '12px 20px',
+      borderRadius: '12px',
+      border: '1px solid rgba(148, 163, 184, 0.1)',
+      display: 'flex',
+      alignItems: 'center',
+      gap: '10px',
+      color: '#94a3b8',
+      fontSize: '13px',
+      width: isMobile ? '100%' : 'auto', // Full width buttons on mobile
+      justifyContent: isMobile ? 'center' : 'flex-start',
+    },
+  };
+
   const DEFAULT_CONFIG = 
 `ROLE: Senior Customer Success & Sales Agent for 'TechFix'.
 OBJECTIVE: Resolve issues efficiently AND promote our new "Gold Shield" protection plan.
@@ -293,10 +318,7 @@ INSTRUCTIONS:
   const intentionalStopRef = useRef(false);
 
   const demoRef = useRef(null);
-  // const WEBSOCKET_URL = 'ws://localhost:8080/ws/voice'; 
-
-  // NEW (Updated for Render)
-  const WEBSOCKET_URL = 'wss://h2ai-backend.onrender.com/ws/voice';
+  const WEBSOCKET_URL = 'wss://h2ai-backend.onrender.com/ws/voice'; 
 
   useEffect(() => {
     const loadVoices = () => { synthRef.current.getVoices(); };
@@ -520,30 +542,30 @@ INSTRUCTIONS:
       {/* 1. HERO SECTION */}
       <div style={styles.heroSection}>
         <h1 style={styles.heroTitle}>
-          H2AI <span style={{fontSize:'16px', color:'#94a3b8', fontWeight:'400'}}>Autonomous Revenue Engine</span>
+          H2AI <span style={{fontSize: isMobile ? '14px' : '16px', color:'#94a3b8', fontWeight:'400', display: 'block', marginTop: '5px'}}>Autonomous Revenue Engine</span>
         </h1>
         
-        {/* --- GRID LAYOUT FOR FEATURES (2 Columns) --- */}
+        {/* --- GRID LAYOUT FOR FEATURES (Responsive) --- */}
         <div style={styles.featureList}>
             <div style={styles.featureItem}>
-                <CheckCircle2 size={16} color="#4ade80" />
+                <CheckCircle2 size={16} color="#4ade80" style={{flexShrink: 0}} />
                 <span><span style={styles.highlight}>Unified Brain:</span> Resolves Queries & runs Ads.</span>
             </div>
             <div style={styles.featureItem}>
-                <CheckCircle2 size={16} color="#4ade80" />
+                <CheckCircle2 size={16} color="#4ade80" style={{flexShrink: 0}} />
                 <span><span style={styles.highlight}>Cost Killer:</span> Eliminates expensive call centers.</span>
             </div>
             <div style={styles.featureItem}>
-                <CheckCircle2 size={16} color="#4ade80" />
+                <CheckCircle2 size={16} color="#4ade80" style={{flexShrink: 0}} />
                 <span><span style={styles.highlight}>MBA-Level Sales:</span> Trained on 10k+ business books.</span>
             </div>
             <div style={styles.featureItem}>
-                <CheckCircle2 size={16} color="#4ade80" />
+                <CheckCircle2 size={16} color="#4ade80" style={{flexShrink: 0}} />
                 <span><span style={styles.highlight}>Omnichannel:</span> Voice, WhatsApp, Instagram & Web.</span>
             </div>
-            {/* The 5th item spans full width to look centered */}
+            {/* The 5th item spans full width */}
             <div style={{...styles.featureItem, gridColumn: '1 / -1', justifyContent: 'center', marginTop: '5px'}}>
-                <MousePointerClick size={16} color="#facc15" />
+                <MousePointerClick size={16} color="#facc15" style={{flexShrink: 0}} />
                 <span style={{color: '#fef08a'}}>Launch ad campaigns with <strong>one click</strong>.</span>
             </div>
         </div>
@@ -555,7 +577,7 @@ INSTRUCTIONS:
          <span>Try Live Demo</span>
       </div>
 
-      {/* 3. DISCLAIMER - NOW THE SCROLL TARGET */}
+      {/* 3. DISCLAIMER - SCROLL TARGET */}
       <div style={styles.disclaimer} ref={demoRef}>
         <AlertTriangle size={24} style={{flexShrink: 0}} />
         <span>
@@ -564,10 +586,10 @@ INSTRUCTIONS:
         </span>
       </div>
 
-      {/* 4. MAIN DEMO GRID */}
+      {/* 4. MAIN DEMO GRID (Responsive) */}
       <div style={styles.mainGrid}>
         
-        {/* LEFT COLUMN: THE "BRAIN" */}
+        {/* LEFT COLUMN: THE "BRAIN" (Order 2 on Mobile) */}
         <div style={styles.card}>
             <div style={{display:'flex', alignItems:'center', gap:'10px', marginBottom:'20px'}}>
                 <div style={{background:'#3b82f6', padding:'8px', borderRadius:'8px'}}><Settings size={20} color="white"/></div>
@@ -620,7 +642,7 @@ INSTRUCTIONS:
             </div>
         </div>
 
-        {/* RIGHT COLUMN: THE "PHONE" */}
+        {/* RIGHT COLUMN: THE "PHONE" (Order 1 on Mobile) */}
         <div style={styles.phoneScreen}>
             {/* Phone Status Bar */}
             <div style={styles.phoneHeader}>
@@ -706,7 +728,7 @@ INSTRUCTIONS:
         </div>
       </div>
 
-      {/* 5. VALUE PROPS */}
+      {/* 5. VALUE PROPS (Responsive) */}
       <div style={styles.valueGrid}>
         <div style={styles.valueCard}>
             <TrendingDown size={28} color="#4ade80" />
