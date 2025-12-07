@@ -291,13 +291,12 @@ OBJECTIVE: Resolve issues efficiently AND promote our new "Gold Shield" protecti
 KNOWLEDGE BASE:
 - Laptop Repair: $50
 - Mobile Repair: $30
-- Current Promo: "Gold Shield" (Yearly free repairs for $99/year).
+- Current offer: "Gold Shield" (Yearly free repairs for $99/year).
 
 INSTRUCTIONS:
 1. Be polite and professional.
-2. If customer asks for repair, give price.
-3. ALWAYS try to upsell the "Gold Shield" plan as a cost-saving measure.
-4. Use persuasion techniques from standard sales psychology books.`;
+2. If customer asks question for above services then only give answer otherwise polietly say no.
+3. Use persuasion techniques from standard sales psychology books.`;
 
   const [companyConfig, setCompanyConfig] = useState(DEFAULT_CONFIG);
   const [isConnected, setIsConnected] = useState(false);
