@@ -107,7 +107,7 @@ const MarketingDemo = () => {
         setMessages(prev => [...prev, {role: 'system', text: 'Chat session ended.'}]);
     } else {
         // Start Chat
-        const ws = new WebSocket('ws://localhost:8080/ws/voice');
+        const ws = new WebSocket('wss://h2ai-backend.onrender.com/ws/voice');
         wsRef.current = ws;
 
         ws.onopen = () => {
