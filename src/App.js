@@ -2,14 +2,14 @@ import React, { useState, useRef, useEffect } from 'react';
 import { 
   Mic, Phone, PhoneOff, MessageSquare, Briefcase, 
   Send, Settings, ChevronRight, Zap, 
-  Users, BarChart3, AlertTriangle, Globe, Menu
+  Users, BarChart3, AlertTriangle, Globe, Menu, Headset, Coins, Clock
 } from 'lucide-react';
 
 /**
- * H2AI INVESTOR LANDING PAGE v7 - RESPONSIVE
- * - Added useIsMobile hook for conditional styling
- * - Adjusted Grids to Flex/Stack on mobile
- * - Scaled typography for mobile viewports
+ * H2AI INVESTOR LANDING PAGE v9
+ * - FEATURES: Reverted to clean 2-card layout (Hiring & Sales engines only).
+ * - ECONOMICS: Split into "Why We Win in Hiring" and "Why We Win in Marketing".
+ * - RESPONSIVE: Maintained full mobile compatibility.
  */
 
 // --- HOOK: DETECT SCREEN SIZE ---
@@ -177,6 +177,10 @@ const MarketingDemo = ({ isMobile }) => {
                     }}>
                         <Globe color="white" size={30}/>
                     </div>
+                    {/* ADDED: Training Context Badge */}
+                    <div style={{background: 'rgba(59, 130, 246, 0.15)', color: '#60a5fa', padding: '4px 12px', borderRadius: '12px', fontSize: '11px', marginBottom: '15px', border: '1px solid rgba(59, 130, 246, 0.2)', fontWeight: '500'}}>
+                        Training: Harvard MBA + 10k Books
+                    </div>
                     <p style={{color: '#94a3b8', marginBottom: '15px'}}>Press button to start demo</p>
                     <button onClick={toggleChat} style={{background: '#3b82f6', color: 'white', border: 'none', padding: '10px 20px', borderRadius: '8px', cursor: 'pointer'}}>
                         Start Live Demo
@@ -211,7 +215,7 @@ const MarketingDemo = ({ isMobile }) => {
                 onChange={(e) => setInput(e.target.value)}
                 onKeyDown={(e) => e.key === 'Enter' && sendMessage()}
                 placeholder={isChatActive ? "Type message..." : "Chat ended"}
-                style={{flex: 1, padding: '10px', borderRadius: '8px', border: 'none', background: '#1e293b', color: 'white', fontSize: '14px', width: '100px'}} // width 100px ensures flex shrink works
+                style={{flex: 1, padding: '10px', borderRadius: '8px', border: 'none', background: '#1e293b', color: 'white', fontSize: '14px', width: '100px'}} 
             />
             <button onClick={sendMessage} disabled={!isChatActive} style={{background: isChatActive ? '#3b82f6' : '#334155', border: 'none', borderRadius: '8px', width: '40px', cursor: 'pointer', display:'flex', alignItems:'center', justifyContent:'center'}}>
                 <Send size={16} color="white"/>
@@ -482,7 +486,6 @@ const App = () => {
              <button onClick={() => scrollToSection('demo-section')} style={{background: 'none', border: 'none', color: '#cbd5e1', cursor: 'pointer', fontSize: '14px', transition: 'color 0.2s'}}>Live Demo</button>
            </div>
         ) : (
-            // Simple Mobile Nav Action
              <button onClick={() => scrollToSection('demo-section')} style={{background: '#3b82f6', border: 'none', color: 'white', padding: '6px 12px', borderRadius: '6px', fontSize: '12px', fontWeight: 'bold'}}>
                 Try Demo
              </button>
@@ -559,12 +562,15 @@ const App = () => {
         </div>
       </div>
 
-      {/* FEATURES */}
+      {/* FEATURES GRID */}
       <section id="features" style={{padding: '100px 20px', maxWidth: '1100px', margin: '0 auto'}}>
         <h2 style={{fontSize: isMobile ? '28px' : '32px', textAlign: 'center', marginBottom: '10px'}}>Two Engines. One Platform.</h2>
         <p style={{textAlign: 'center', color: '#94a3b8', marginBottom: '60px'}}>Replace manual bottlenecks with intelligent automation.</p>
         
+        {/* REVERTED TO 2 COLUMN LAYOUT (NO EXTRA CARDS) */}
         <div style={{display: 'grid', gridTemplateColumns: isMobile ? '1fr' : '1fr 1fr', gap: '40px'}}>
+          
+          {/* CARD 1: HIRING ENGINE */}
           <div style={{background: '#1e293b', padding: '40px', borderRadius: '24px', border: '1px solid #334155', position: 'relative', overflow: 'hidden'}}>
             <div style={{position: 'absolute', top: 0, right: 0, padding: '10px 20px', background: '#2e1065', borderBottomLeftRadius: '24px', color: '#d8b4fe', fontSize: '12px', fontWeight: 'bold'}}>HIRING</div>
             <div style={{width: '50px', height: '50px', background: '#a855f7', borderRadius: '12px', display: 'flex', alignItems: 'center', justifyContent: 'center', marginBottom: '20px'}}>
@@ -580,6 +586,7 @@ const App = () => {
             </ul>
           </div>
 
+          {/* CARD 2: SALES ENGINE (WITH MBA COPY) */}
           <div style={{background: '#1e293b', padding: '40px', borderRadius: '24px', border: '1px solid #334155', position: 'relative', overflow: 'hidden'}}>
             <div style={{position: 'absolute', top: 0, right: 0, padding: '10px 20px', background: '#172554', borderBottomLeftRadius: '24px', color: '#93c5fd', fontSize: '12px', fontWeight: 'bold'}}>SALES</div>
             <div style={{width: '50px', height: '50px', background: '#3b82f6', borderRadius: '12px', display: 'flex', alignItems: 'center', justifyContent: 'center', marginBottom: '20px'}}>
@@ -587,23 +594,27 @@ const App = () => {
             </div>
             <h3 style={{fontSize: '24px', marginBottom: '10px'}}>The Sales Engine</h3>
             <p style={{color: '#94a3b8', lineHeight: '1.6', marginBottom: '30px'}}>
-              Turn leads into revenue. Launch 1,000-person campaigns instantly.
+              Trained on <strong>Harvard MBA case studies</strong> and <strong>10,000+ sales books</strong>. Our AI uses advanced sales psychology to close deals like a top-tier rep.
             </p>
             <ul style={{listStyle: 'none', padding: 0, color: '#cbd5e1', display: 'flex', flexDirection: 'column', gap: '12px'}}>
               <li style={{display: 'flex', gap: '10px', alignItems: 'center'}}><Zap size={16} color="#3b82f6"/> Omnichannel Domination</li>
               <li style={{display: 'flex', gap: '10px', alignItems: 'center'}}><Zap size={16} color="#3b82f6"/> Psychological Closing</li>
             </ul>
           </div>
+
         </div>
       </section>
 
-      {/* PRICING */}
-      <section id="economics" style={{background: '#0f172a', padding: '100px 20px'}}>
+      {/* ECONOMICS & WHY WE WIN */}
+      <section id="economics" style={{background: '#0f172a', padding: '80px 20px'}}>
         <div style={{maxWidth: '900px', margin: '0 auto'}}>
-          <h2 style={{textAlign: 'center', marginBottom: '10px'}}>Why We Win</h2>
-          <p style={{textAlign: 'center', color: '#94a3b8', marginBottom: '50px'}}>Radically better economics through "Map-Reduce" Architecture.</p>
+          <div style={{marginBottom: '50px', textAlign: 'center'}}>
+             <h2 style={{marginBottom: '10px'}}>Why We Win in Hiring</h2>
+             <p style={{color: '#94a3b8'}}>Radically better economics through "Map-Reduce" Architecture.</p>
+          </div>
           
-          <div style={{background: '#1e293b', borderRadius: '16px', overflowX: 'auto', border: '1px solid #334155', boxShadow: '0 20px 40px rgba(0,0,0,0.3)'}}>
+          {/* HIRING TABLE */}
+          <div style={{background: '#1e293b', borderRadius: '16px', overflowX: 'auto', border: '1px solid #334155', boxShadow: '0 20px 40px rgba(0,0,0,0.3)', marginBottom: '80px'}}>
             <table style={{width: '100%', minWidth: '600px', borderCollapse: 'collapse', textAlign: 'left'}}>
               <thead>
                 <tr style={{borderBottom: '1px solid #334155', background: '#020617'}}>
@@ -626,6 +637,37 @@ const App = () => {
               </tbody>
             </table>
           </div>
+
+          <div style={{marginBottom: '50px', textAlign: 'center'}}>
+             <h2 style={{marginBottom: '10px'}}>Why We Win in Marketing</h2>
+             <p style={{color: '#94a3b8'}}>Replace Sales Call Centers with Infinite Scale.</p>
+          </div>
+
+          {/* MARKETING TABLE (NEW) */}
+          <div style={{background: '#1e293b', borderRadius: '16px', overflowX: 'auto', border: '1px solid #334155', boxShadow: '0 20px 40px rgba(0,0,0,0.3)'}}>
+            <table style={{width: '100%', minWidth: '600px', borderCollapse: 'collapse', textAlign: 'left'}}>
+              <thead>
+                <tr style={{borderBottom: '1px solid #334155', background: '#020617'}}>
+                  <th style={{padding: '25px', color: '#94a3b8', fontSize: '14px', textTransform: 'uppercase'}}>Solution</th>
+                  <th style={{padding: '25px', color: '#94a3b8', fontSize: '14px', textTransform: 'uppercase'}}>Capacity</th>
+                  <th style={{padding: '25px', color: '#94a3b8', fontSize: '14px', textTransform: 'uppercase'}}>Avg Cost</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr style={{borderBottom: '1px solid #334155'}}>
+                  <td style={{padding: '25px'}}>Human Call Center</td>
+                  <td style={{padding: '25px', color: '#ef4444'}}>Limited (1 call at a time)</td>
+                  <td style={{padding: '25px', color: '#ef4444'}}>$3,000 / month / agent</td>
+                </tr>
+                <tr style={{background: 'rgba(59, 130, 246, 0.05)'}}>
+                  <td style={{padding: '25px', fontWeight: 'bold', color: '#3b82f6'}}>H2AI Sales Agent</td>
+                  <td style={{padding: '25px', fontWeight: 'bold', color: '#22c55e'}}>Infinite (10k+ concurrent)</td>
+                  <td style={{padding: '25px', fontWeight: 'bold', color: '#f8fafc'}}>$0.10 / conversation</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+
         </div>
       </section>
 
