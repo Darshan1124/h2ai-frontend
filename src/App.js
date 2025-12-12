@@ -178,9 +178,9 @@ const MarketingDemo = ({ isMobile }) => {
                         <Globe color="white" size={30}/>
                     </div>
                     {/* ADDED: Training Context Badge */}
-                    <div style={{background: 'rgba(59, 130, 246, 0.15)', color: '#60a5fa', padding: '4px 12px', borderRadius: '12px', fontSize: '11px', marginBottom: '15px', border: '1px solid rgba(59, 130, 246, 0.2)', fontWeight: '500'}}>
+                    {/* <div style={{background: 'rgba(59, 130, 246, 0.15)', color: '#60a5fa', padding: '4px 12px', borderRadius: '12px', fontSize: '11px', marginBottom: '15px', border: '1px solid rgba(59, 130, 246, 0.2)', fontWeight: '500'}}>
                         Training: Harvard MBA + 10k Books
-                    </div>
+                    </div> */}
                     <p style={{color: '#94a3b8', marginBottom: '15px'}}>Press button to start demo</p>
                     <button onClick={toggleChat} style={{background: '#3b82f6', color: 'white', border: 'none', padding: '10px 20px', borderRadius: '8px', cursor: 'pointer'}}>
                         Start Live Demo
