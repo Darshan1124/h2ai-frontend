@@ -581,7 +581,7 @@ const App = () => {
               Stop paying $20+ per assessment. Automate sourcing, screening, and voice interviews.
             </p>
             <ul style={{listStyle: 'none', padding: 0, color: '#cbd5e1', display: 'flex', flexDirection: 'column', gap: '12px'}}>
-              <li style={{display: 'flex', gap: '10px', alignItems: 'center'}}><Zap size={16} color="#a855f7"/> Powered by Gemini 3.0 Pro</li>
+              <li style={{display: 'flex', gap: '10px', alignItems: 'center'}}><Zap size={16} color="#a855f7"/> Next-Gen Cognitive AI</li>
               <li style={{display: 'flex', gap: '10px', alignItems: 'center'}}><Zap size={16} color="#a855f7"/> Deep Technical Reasoning</li>
             </ul>
           </div>
