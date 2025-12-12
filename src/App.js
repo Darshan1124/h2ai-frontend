@@ -2,15 +2,29 @@ import React, { useState, useRef, useEffect } from 'react';
 import { 
   Mic, Phone, PhoneOff, MessageSquare, Briefcase, 
   Send, Settings, ChevronRight, Zap, 
-  Users, BarChart3, AlertTriangle, Globe
+  Users, BarChart3, AlertTriangle, Globe, Menu
 } from 'lucide-react';
 
 /**
- * H2AI INVESTOR LANDING PAGE v7
- * - COMPACT DESIGN: Demo section height reduced (700px -> 550px)
- * - TIGHTER SPACING: Reduced margins and padding in sidebar and demo areas
- * - RETAINED: All Logic & Visual Style
+ * H2AI INVESTOR LANDING PAGE v7 - RESPONSIVE
+ * - Added useIsMobile hook for conditional styling
+ * - Adjusted Grids to Flex/Stack on mobile
+ * - Scaled typography for mobile viewports
  */
+
+// --- HOOK: DETECT SCREEN SIZE ---
+const useIsMobile = () => {
+  const [isMobile, setIsMobile] = useState(false);
+
+  useEffect(() => {
+    const checkMobile = () => setIsMobile(window.innerWidth < 850);
+    checkMobile();
+    window.addEventListener("resize", checkMobile);
+    return () => window.removeEventListener("resize", checkMobile);
+  }, []);
+
+  return isMobile;
+};
 
 // --- HOOK: DETECT SCROLL DIRECTION ---
 const useScrollDirection = () => {
@@ -60,7 +74,7 @@ INTERVIEW STYLE:
 const PITCH_DECK_URL = "https://docs.google.com/presentation/d/1PL3uEikWQZzVeM7smnAXoEQNpNt2mYMc/edit?usp=sharing&ouid=111178303563246903729&rtpof=true&sd=true";
 
 // --- COMPONENT: MARKETING CHAT DEMO ---
-const MarketingDemo = () => {
+const MarketingDemo = ({ isMobile }) => {
   const [config, setConfig] = useState(MARKETING_DEFAULT);
   const [messages, setMessages] = useState([]);
   const [input, setInput] = useState("");
@@ -118,10 +132,24 @@ const MarketingDemo = () => {
   };
 
   return (
-    <div style={{display: 'grid', gridTemplateColumns: '300px 1fr', height: '100%', position: 'relative', zIndex: 2}}>
+    <div style={{
+        display: 'grid', 
+        gridTemplateColumns: isMobile ? '1fr' : '300px 1fr', 
+        gridTemplateRows: isMobile ? '120px 1fr' : '100%',
+        height: '100%', 
+        position: 'relative', 
+        zIndex: 2
+    }}>
       {/* Config Panel - Compact */}
-      <div style={{background: '#0f172a', padding: '20px', borderRight: '1px solid #334155', display: 'flex', flexDirection: 'column'}}>
-         <h4 style={{marginBottom: '10px', color: '#94a3b8', display: 'flex', alignItems: 'center', gap: '10px', fontSize: '14px'}}>
+      <div style={{
+          background: '#0f172a', 
+          padding: '15px', 
+          borderRight: isMobile ? 'none' : '1px solid #334155', 
+          borderBottom: isMobile ? '1px solid #334155' : 'none',
+          display: 'flex', 
+          flexDirection: 'column'
+      }}>
+         <h4 style={{marginBottom: '10px', color: '#94a3b8', display: 'flex', alignItems: 'center', gap: '10px', fontSize: '14px', marginTop: 0}}>
            <Settings size={14}/> Knowledge Base
          </h4>
          <textarea 
@@ -137,10 +165,10 @@ const MarketingDemo = () => {
       </div>
 
       {/* Chat UI */}
-      <div style={{display: 'flex', flexDirection: 'column', background: 'rgba(2, 6, 23, 0.8)'}}>
+      <div style={{display: 'flex', flexDirection: 'column', background: 'rgba(2, 6, 23, 0.8)', height: '100%', overflow: 'hidden'}}>
         <div style={{flex: 1, overflowY: 'auto', padding: '20px', display: 'flex', flexDirection: 'column', gap: '10px'}}>
             {!isChatActive && messages.length === 0 && (
-                <div style={{textAlign: 'center', marginTop: '60px', display: 'flex', flexDirection: 'column', alignItems: 'center'}}>
+                <div style={{textAlign: 'center', marginTop: isMobile ? '20px' : '60px', display: 'flex', flexDirection: 'column', alignItems: 'center'}}>
                     <div style={{
                     width: '60px', height: '60px', background: '#3b82f6', borderRadius: '50%', 
                     display: 'flex', alignItems: 'center', justifyContent: 'center', marginBottom: '15px', 
@@ -164,7 +192,7 @@ const MarketingDemo = () => {
                         color: m.role === 'system' ? '#94a3b8' : 'white',
                         padding: '10px 15px',
                         borderRadius: '10px',
-                        maxWidth: '80%',
+                        maxWidth: '90%',
                         fontSize: m.role === 'system' ? '12px' : '14px',
                         animation: 'fadeIn 0.3s ease-in'
                     }}>
@@ -182,8 +210,8 @@ const MarketingDemo = () => {
                 disabled={!isChatActive}
                 onChange={(e) => setInput(e.target.value)}
                 onKeyDown={(e) => e.key === 'Enter' && sendMessage()}
-                placeholder={isChatActive ? "Type your message..." : "Chat ended"}
-                style={{flex: 1, padding: '10px', borderRadius: '8px', border: 'none', background: '#1e293b', color: 'white', fontSize: '14px'}}
+                placeholder={isChatActive ? "Type message..." : "Chat ended"}
+                style={{flex: 1, padding: '10px', borderRadius: '8px', border: 'none', background: '#1e293b', color: 'white', fontSize: '14px', width: '100px'}} // width 100px ensures flex shrink works
             />
             <button onClick={sendMessage} disabled={!isChatActive} style={{background: isChatActive ? '#3b82f6' : '#334155', border: 'none', borderRadius: '8px', width: '40px', cursor: 'pointer', display:'flex', alignItems:'center', justifyContent:'center'}}>
                 <Send size={16} color="white"/>
@@ -200,15 +228,15 @@ const MarketingDemo = () => {
 };
 
 // --- COMPONENT: HIRING VOICE DEMO ---
-const HiringDemo = () => {
+const HiringDemo = ({ isMobile }) => {
   const [config, setConfig] = useState(HIRING_DEFAULT);
-  const [status, setStatus] = useState("Ready to Interview");
+  const [status, setStatus] = useState("Ready");
   const [isLive, setIsLive] = useState(false);
   const [aiSpeaking, setAiSpeaking] = useState(false);
 
   const socketRef = useRef(null);
   const recognitionRef = useRef(null);
-  const synthRef = useRef(window.speechSynthesis);
+  const synthRef = useRef(typeof window !== 'undefined' ? window.speechSynthesis : null);
 
   useEffect(() => {
     return () => stopCall(); 
@@ -222,7 +250,7 @@ const HiringDemo = () => {
     socketRef.current = ws;
 
     ws.onopen = () => {
-      setStatus("Connected • Listening...");
+      setStatus("Listening...");
       startRecognition();
     };
 
@@ -241,10 +269,10 @@ const HiringDemo = () => {
 
   const stopCall = () => {
     setIsLive(false);
-    setStatus("Ready to Interview");
+    setStatus("Ready");
     if (socketRef.current) socketRef.current.close();
     if (recognitionRef.current) recognitionRef.current.stop();
-    synthRef.current.cancel();
+    if (synthRef.current) synthRef.current.cancel();
   };
 
   const speakText = (text) => {
@@ -283,7 +311,7 @@ const HiringDemo = () => {
 
     recognition.onresult = (event) => {
       const transcript = event.results[0][0].transcript;
-      setStatus("Processing: " + transcript.substring(0, 20) + "...");
+      setStatus("Processed.");
       if(socketRef.current && socketRef.current.readyState === WebSocket.OPEN) {
         socketRef.current.send(JSON.stringify({
           text: transcript,
@@ -304,10 +332,24 @@ const HiringDemo = () => {
   };
 
   return (
-    <div style={{display: 'grid', gridTemplateColumns: '300px 1fr', height: '100%', position: 'relative', zIndex: 2}}>
+    <div style={{
+        display: 'grid', 
+        gridTemplateColumns: isMobile ? '1fr' : '300px 1fr', 
+        gridTemplateRows: isMobile ? '120px 1fr' : '100%',
+        height: '100%', 
+        position: 'relative', 
+        zIndex: 2
+    }}>
         {/* Config Panel - Compact */}
-        <div style={{background: '#0f172a', padding: '20px', borderRight: '1px solid #334155', display: 'flex', flexDirection: 'column'}}>
-            <h4 style={{marginBottom: '10px', color: '#a855f7', display: 'flex', alignItems: 'center', gap: '10px', fontSize: '14px'}}>
+        <div style={{
+            background: '#0f172a', 
+            padding: '15px', 
+            borderRight: isMobile ? 'none' : '1px solid #334155', 
+            borderBottom: isMobile ? '1px solid #334155' : 'none',
+            display: 'flex', 
+            flexDirection: 'column'
+        }}>
+            <h4 style={{marginBottom: '10px', color: '#a855f7', display: 'flex', alignItems: 'center', gap: '10px', fontSize: '14px', marginTop: 0}}>
                 <Briefcase size={14}/> Job Requirements
             </h4>
             <textarea 
@@ -323,19 +365,21 @@ const HiringDemo = () => {
         </div>
 
         {/* Voice UI - Compact */}
-        <div style={{background: 'rgba(2, 6, 23, 0.8)', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center'}}>
+        <div style={{background: 'rgba(2, 6, 23, 0.8)', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', padding: '20px'}}>
             <div style={{
-                width: '100px', height: '100px', borderRadius: '50%', // Reduced from 120px
+                width: isMobile ? '80px' : '100px', 
+                height: isMobile ? '80px' : '100px', 
+                borderRadius: '50%', 
                 background: aiSpeaking ? 'radial-gradient(circle, #a855f7 0%, transparent 70%)' : isLive ? 'radial-gradient(circle, #22c55e 0%, transparent 70%)' : '#1e293b',
                 border: '2px solid #334155',
                 display: 'flex', alignItems: 'center', justifyContent: 'center',
                 boxShadow: isLive ? '0 0 40px rgba(168, 85, 247, 0.6)' : 'none',
-                marginBottom: '20px', // Reduced margin
+                marginBottom: '20px', 
                 transition: 'all 0.3s',
                 transform: aiSpeaking ? 'scale(1.2)' : 'scale(1)',
                 animation: aiSpeaking ? 'pulse 1s infinite' : 'none'
             }}>
-                {isLive ? <Mic size={32} color="white" /> : <Mic size={32} color="#64748b" />}
+                {isLive ? <Mic size={isMobile ? 24 : 32} color="white" /> : <Mic size={isMobile ? 24 : 32} color="#64748b" />}
             </div>
 
             <div style={{color: '#94a3b8', marginBottom: '15px', fontFamily: 'monospace', display:'flex', alignItems:'center', gap: '8px', fontSize: '13px'}}>
@@ -373,6 +417,7 @@ const HiringDemo = () => {
 const App = () => {
   const [demoTab, setDemoTab] = useState('sales');
   const scrollDirection = useScrollDirection();
+  const isMobile = useIsMobile();
   
   const styles = `
     @keyframes pulse-glow {
@@ -411,7 +456,7 @@ const App = () => {
       
       {/* SMART NAVBAR */}
       <nav style={{
-        padding: '15px 40px', 
+        padding: isMobile ? '15px 20px' : '15px 40px', 
         display: 'flex', 
         justifyContent: 'space-between', 
         alignItems: 'center', 
@@ -428,17 +473,26 @@ const App = () => {
         <div style={{fontSize: '24px', fontWeight: '900', letterSpacing: '-1px', background: 'linear-gradient(to right, #60a5fa, #a855f7)', WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent'}}>
           H2AI
         </div>
-        <div style={{display: 'flex', gap: '30px', fontSize: '14px', fontWeight: '500'}}>
-          <button onClick={() => scrollToSection('features')} style={{background: 'none', border: 'none', color: '#cbd5e1', cursor: 'pointer', fontSize: '14px', transition: 'color 0.2s'}}>Features</button>
-          <button onClick={() => scrollToSection('economics')} style={{background: 'none', border: 'none', color: '#cbd5e1', cursor: 'pointer', fontSize: '14px', transition: 'color 0.2s'}}>Pricing</button>
-          <button onClick={() => scrollToSection('demo-section')} style={{background: 'none', border: 'none', color: '#cbd5e1', cursor: 'pointer', fontSize: '14px', transition: 'color 0.2s'}}>Live Demo</button>
-        </div>
+        
+        {/* Desktop Nav */}
+        {!isMobile ? (
+             <div style={{display: 'flex', gap: '30px', fontSize: '14px', fontWeight: '500'}}>
+             <button onClick={() => scrollToSection('features')} style={{background: 'none', border: 'none', color: '#cbd5e1', cursor: 'pointer', fontSize: '14px', transition: 'color 0.2s'}}>Features</button>
+             <button onClick={() => scrollToSection('economics')} style={{background: 'none', border: 'none', color: '#cbd5e1', cursor: 'pointer', fontSize: '14px', transition: 'color 0.2s'}}>Pricing</button>
+             <button onClick={() => scrollToSection('demo-section')} style={{background: 'none', border: 'none', color: '#cbd5e1', cursor: 'pointer', fontSize: '14px', transition: 'color 0.2s'}}>Live Demo</button>
+           </div>
+        ) : (
+            // Simple Mobile Nav Action
+             <button onClick={() => scrollToSection('demo-section')} style={{background: '#3b82f6', border: 'none', color: 'white', padding: '6px 12px', borderRadius: '6px', fontSize: '12px', fontWeight: 'bold'}}>
+                Try Demo
+             </button>
+        )}
       </nav>
 
       <div style={{height: '80px'}}></div>
 
       {/* HERO SECTION */}
-      <header style={{textAlign: 'center', padding: '80px 20px', maxWidth: '800px', margin: '0 auto', position: 'relative'}}>
+      <header style={{textAlign: 'center', padding: isMobile ? '40px 20px' : '80px 20px', maxWidth: '800px', margin: '0 auto', position: 'relative'}}>
         <div style={{position: 'absolute', top: '50%', left: '50%', transform: 'translate(-50%, -50%)', width: '600px', height: '600px', background: 'radial-gradient(circle, rgba(59,130,246,0.15) 0%, rgba(0,0,0,0) 70%)', zIndex: -1}}></div>
         
         <div style={{display: 'inline-flex', alignItems: 'center', gap: '8px', padding: '6px 16px', borderRadius: '20px', background: 'rgba(59, 130, 246, 0.1)', color: '#60a5fa', fontSize: '13px', fontWeight: '600', marginBottom: '24px', border: '1px solid rgba(59, 130, 246, 0.2)'}}>
@@ -446,16 +500,16 @@ const App = () => {
           The Autonomous Revenue Engine
         </div>
         
-        <h1 style={{fontSize: '60px', fontWeight: '800', lineHeight: '1.1', marginBottom: '24px', letterSpacing: '-1.5px'}}>
+        <h1 style={{fontSize: isMobile ? '36px' : '60px', fontWeight: '800', lineHeight: '1.1', marginBottom: '24px', letterSpacing: '-1.5px'}}>
           From Hiring to Acquisition<br/>
           <span style={{color: '#94a3b8'}}>One Platform.</span>
         </h1>
         
-        <p style={{fontSize: '18px', color: '#94a3b8', lineHeight: '1.6', marginBottom: '48px', maxWidth: '600px', margin: '0 auto 48px auto'}}>
+        <p style={{fontSize: isMobile ? '16px' : '18px', color: '#94a3b8', lineHeight: '1.6', marginBottom: '48px', maxWidth: '600px', margin: '0 auto 48px auto'}}>
           Scale your business without the "Growth Tax". Automate sourcing, interviewing, and sales with AI that costs fractions of a penny.
         </p>
         
-        <div style={{display: 'flex', gap: '15px', justifyContent: 'center', alignItems: 'center'}}>
+        <div style={{display: 'flex', flexDirection: isMobile ? 'column' : 'row', gap: '15px', justifyContent: 'center', alignItems: 'center'}}>
           <button 
             onClick={() => scrollToSection('demo-section')} 
             style={{
@@ -463,7 +517,9 @@ const App = () => {
               fontWeight: 'bold', fontSize: '16px', cursor: 'pointer', display: 'flex', alignItems: 'center', gap: '10px',
               animation: 'pulse-glow 2s infinite',
               transition: 'transform 0.2s',
-              boxShadow: '0 4px 14px rgba(59, 130, 246, 0.4)'
+              boxShadow: '0 4px 14px rgba(59, 130, 246, 0.4)',
+              width: isMobile ? '100%' : 'auto',
+              justifyContent: 'center'
             }}
             onMouseOver={(e) => e.target.style.transform = 'scale(1.05)'}
             onMouseOut={(e) => e.target.style.transform = 'scale(1)'}
@@ -473,7 +529,10 @@ const App = () => {
           
           <button 
             onClick={() => window.open(PITCH_DECK_URL, '_blank')}
-            style={{background: 'transparent', border: '1px solid #334155', color: '#cbd5e1', padding: '16px 32px', borderRadius: '12px', fontWeight: '600', fontSize: '16px', cursor: 'pointer', transition: 'background 0.2s'}}
+            style={{
+                background: 'transparent', border: '1px solid #334155', color: '#cbd5e1', padding: '16px 32px', borderRadius: '12px', fontWeight: '600', fontSize: '16px', cursor: 'pointer', transition: 'background 0.2s',
+                width: isMobile ? '100%' : 'auto'
+            }}
             onMouseOver={(e) => e.target.style.background = '#1e293b'}
             onMouseOut={(e) => e.target.style.background = 'transparent'}
           >
@@ -484,7 +543,7 @@ const App = () => {
 
       {/* STATS */}
       <div style={{borderTop: '1px solid #1e293b', borderBottom: '1px solid #1e293b', padding: '40px 0', background: '#0f172a', marginTop: '60px'}}>
-        <div style={{maxWidth: '1000px', margin: '0 auto', display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: '20px', textAlign: 'center'}}>
+        <div style={{maxWidth: '1000px', margin: '0 auto', display: 'grid', gridTemplateColumns: isMobile ? '1fr' : 'repeat(3, 1fr)', gap: isMobile ? '30px' : '20px', textAlign: 'center'}}>
            <div>
              <div style={{fontSize: '36px', fontWeight: '800', color: '#fff', marginBottom: '5px'}}>20x</div>
              <div style={{color: '#64748b', fontSize: '14px', textTransform: 'uppercase', letterSpacing: '1px', fontWeight: '600'}}>Cost Savings</div>
@@ -502,10 +561,10 @@ const App = () => {
 
       {/* FEATURES */}
       <section id="features" style={{padding: '100px 20px', maxWidth: '1100px', margin: '0 auto'}}>
-        <h2 style={{fontSize: '32px', textAlign: 'center', marginBottom: '10px'}}>Two Engines. One Platform.</h2>
+        <h2 style={{fontSize: isMobile ? '28px' : '32px', textAlign: 'center', marginBottom: '10px'}}>Two Engines. One Platform.</h2>
         <p style={{textAlign: 'center', color: '#94a3b8', marginBottom: '60px'}}>Replace manual bottlenecks with intelligent automation.</p>
         
-        <div style={{display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '40px'}}>
+        <div style={{display: 'grid', gridTemplateColumns: isMobile ? '1fr' : '1fr 1fr', gap: '40px'}}>
           <div style={{background: '#1e293b', padding: '40px', borderRadius: '24px', border: '1px solid #334155', position: 'relative', overflow: 'hidden'}}>
             <div style={{position: 'absolute', top: 0, right: 0, padding: '10px 20px', background: '#2e1065', borderBottomLeftRadius: '24px', color: '#d8b4fe', fontSize: '12px', fontWeight: 'bold'}}>HIRING</div>
             <div style={{width: '50px', height: '50px', background: '#a855f7', borderRadius: '12px', display: 'flex', alignItems: 'center', justifyContent: 'center', marginBottom: '20px'}}>
@@ -544,8 +603,8 @@ const App = () => {
           <h2 style={{textAlign: 'center', marginBottom: '10px'}}>Why We Win</h2>
           <p style={{textAlign: 'center', color: '#94a3b8', marginBottom: '50px'}}>Radically better economics through "Map-Reduce" Architecture.</p>
           
-          <div style={{background: '#1e293b', borderRadius: '16px', overflow: 'hidden', border: '1px solid #334155', boxShadow: '0 20px 40px rgba(0,0,0,0.3)'}}>
-            <table style={{width: '100%', borderCollapse: 'collapse', textAlign: 'left'}}>
+          <div style={{background: '#1e293b', borderRadius: '16px', overflowX: 'auto', border: '1px solid #334155', boxShadow: '0 20px 40px rgba(0,0,0,0.3)'}}>
+            <table style={{width: '100%', minWidth: '600px', borderCollapse: 'collapse', textAlign: 'left'}}>
               <thead>
                 <tr style={{borderBottom: '1px solid #334155', background: '#020617'}}>
                   <th style={{padding: '25px', color: '#94a3b8', fontSize: '14px', textTransform: 'uppercase'}}>Provider</th>
@@ -577,7 +636,7 @@ const App = () => {
              <div style={{width: '8px', height: '8px', background: '#22c55e', borderRadius: '50%', animation: 'blink 1s infinite'}}></div>
              LIVE SYSTEM ONLINE
            </div>
-           <h2 style={{fontSize: '32px'}}>Experience the Future</h2>
+           <h2 style={{fontSize: isMobile ? '28px' : '32px'}}>Experience the Future</h2>
            <p style={{color: '#94a3b8'}}>Try our live Beta modules below.</p>
            
            {/* INLINE BETA WARNING */}
@@ -592,9 +651,10 @@ const App = () => {
              alignItems: 'center',
              gap: '8px',
              fontSize: '12px',
-             fontWeight: '500'
+             fontWeight: '500',
+             textAlign: 'left'
            }}>
-             <AlertTriangle size={14} />
+             <AlertTriangle size={14} style={{flexShrink: 0}} />
              <span>BETA PREVIEW: System is live for investor demonstration.</span>
            </div>
         </div>
@@ -615,25 +675,25 @@ const App = () => {
               style={{
                 flex: 1, padding: '15px', background: demoTab === 'sales' ? '#172554' : 'transparent', 
                 color: demoTab === 'sales' ? '#93c5fd' : '#94a3b8', border: 'none', cursor: 'pointer',
-                fontWeight: 'bold', display: 'flex', justifyContent: 'center', gap: '10px', transition: 'all 0.3s', fontSize: '14px'
+                fontWeight: 'bold', display: 'flex', justifyContent: 'center', gap: '10px', transition: 'all 0.3s', fontSize: isMobile ? '12px' : '14px', alignItems: 'center'
               }}
             >
-              <MessageSquare size={18}/> Sales & Marketing AI
+              <MessageSquare size={isMobile ? 14 : 18}/> {isMobile ? "Sales AI" : "Sales & Marketing AI"}
             </button>
             <button 
               onClick={() => setDemoTab('hiring')}
               style={{
                 flex: 1, padding: '15px', background: demoTab === 'hiring' ? '#2e1065' : 'transparent', 
                 color: demoTab === 'hiring' ? '#d8b4fe' : '#94a3b8', border: 'none', cursor: 'pointer',
-                fontWeight: 'bold', display: 'flex', justifyContent: 'center', gap: '10px', transition: 'all 0.3s', fontSize: '14px'
+                fontWeight: 'bold', display: 'flex', justifyContent: 'center', gap: '10px', transition: 'all 0.3s', fontSize: isMobile ? '12px' : '14px', alignItems: 'center'
               }}
             >
-              <Briefcase size={18}/> Hiring & Interview AI
+              <Briefcase size={isMobile ? 14 : 18}/> {isMobile ? "Hiring AI" : "Hiring & Interview AI"}
             </button>
           </div>
 
           <div style={{flex: 1, zIndex: 1, position: 'relative'}}>
-             {demoTab === 'hiring' ? <HiringDemo /> : <MarketingDemo />}
+             {demoTab === 'hiring' ? <HiringDemo isMobile={isMobile} /> : <MarketingDemo isMobile={isMobile} />}
           </div>
         </div>
       </section>
